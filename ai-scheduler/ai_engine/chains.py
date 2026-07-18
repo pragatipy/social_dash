@@ -1,7 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from schemas import LinkedInPostDraft, LinkedInArticleDraft, XTweetDraft, XThreadDraft
-from prompts import (
+from ai_engine.schemas import LinkedInPostDraft, LinkedInArticleDraft, XTweetDraft, XThreadDraft
+from ai_engine.prompts import (
     build_generation_prompt,
     build_refine_prompt,
     LINKEDIN_POST_SYSTEM,

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from chains import (
+from ai_engine.chains import (
     llm,
     linkedin_post_chain,
     linkedin_article_chain,
@@ -8,7 +8,7 @@ from chains import (
     x_thread_chain,
     refine_prompt,
 )
-from prompts import TONE_GUIDE, LENGTH_GUIDE
+from ai_engine.prompts import TONE_GUIDE, LENGTH_GUIDE
 
 _PLATFORM_CHAINS = {
     "linkedin_post": linkedin_post_chain,

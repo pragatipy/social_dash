@@ -6,7 +6,7 @@ import redis
 from scheduler.models import ScheduledJob, PostStatus
 
 DUE_INDEX_KEY = "jobs:due_index"
-
+FAILED_INDEX_KEY = "jobs:failed_index"
 
 def _job_key(job_id: str) -> str:
     return f"job:{job_id}"
@@ -67,6 +67,7 @@ class SchedulingEngine:
             job.next_attempt_time = None
             self._save(job)
             self.r.zrem(DUE_INDEX_KEY, job_id)
+            self.r.sadd(FAILED_INDEX_KEY, job_id)
         else:
             job.status = PostStatus.RETRYING
             backoff_seconds = 60 * (2 ** (job.retry_count - 1))
@@ -79,3 +80,13 @@ class SchedulingEngine:
     def get_job(self, job_id: str) -> Optional[ScheduledJob]:
         raw = self.r.get(_job_key(job_id))
         return ScheduledJob.from_json(raw) if raw else None
+    
+
+    def get_failed_jobs(self) -> List[ScheduledJob]:
+        failed_ids = self.r.smembers(FAILED_INDEX_KEY)
+        jobs = []
+        for job_id in failed_ids:
+            raw = self.r.get(_job_key(job_id))
+            if raw:
+                jobs.append(ScheduledJob.from_json(raw))
+        return jobs
